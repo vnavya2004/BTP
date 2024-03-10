@@ -7,3 +7,4 @@
 * multilingual-japaneese ---bvcxz20236@gmail.com
 
 * LLAMA2(MULTILINGUAL)-bangla,japaneese ---gfg882004@gmail.com
+* LLAMA2(MULTILINGUAL)arabic,korean ---bvcxz20234@gmail.com
