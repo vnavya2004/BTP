@@ -33,14 +33,12 @@ Spanish Dataset n	XLM_ROBERTA	0.933	0.917	0.958	0.937
 PREPROCESSING USING LLAMA2					
 Datasets	Model Used	Test Accuracy	Test precision	Test Recall	Test F1 score
 Arabic Dataset n	Multi-lingual BERT	0.9616	0.945904173	0.9792	0.962264151
-Bangla Dataset n	Multi-lingual BERT	0.748723187	0	0	0
+Bangla Dataset n	Multi-lingual BERT	0.774259448	0.780243061	0.774259448	0.771513741
 Japaneese Dataset n	Multi-lingual BERT	0.992	0.984251969	0.99	0.992063492
 Korean Dataset n	Multi-lingual BERT	0.984	0.968992248	0.99	0.984251969
 Spanish Dataset n	Multi-lingual BERT	0.907631954	0.936045087	0.88099631	0.907686824
 Arabic Dataset n	XLM ROBERTA	0.9644	0.955294118	0.9744	0.964752475
-Bangla Dataset n	XLM ROBERTA	0.748723187	0	0	0
+Bangla Dataset n	XLM ROBERTA	0.748723187	0.96386334	0.748723187	0.660364646
 Japaneese Dataset n	XLM ROBERTA	0.736	0.697986577	0.832	0.759124088
-Korean Dataset n	XLM ROBERTA	0.968	0.946564885	0.992	0.96875
+Korean Dataset n        XLM ROBERTA	0.968	0.946564885	0.992	0.96875
 Spanish Dataset n	XLM ROBERTA	0.86	0.819	0.94	0.87
-![image](https://github.com/vnavya2004/BTP/assets/118450993/64c530a0-6dba-4ec6-99c6-474e73219173)
-
