@@ -25,8 +25,8 @@ Dataset                  Model Used          Test Accuracy    Test precision   T
 * Spanish Dataset n     Multi-lingual BERT	0.93	0.927	0.939	0.933
 * Arabic Dataset n      XLM_ROBERTA	      0.9724	0.991673605	0.9528	0.971848225
 * Bangla Dataset n      XLM_ROBERTA	      0.81818	0.671717172	0.540650407	0.6
-* Japaneese Dataset n   XLM_ROBERTA            1	1	1	1
-* Korean Dataset n      XLM_ROBERTA            1       1	1	1
+* Japaneese Dataset n	XLM_ROBERTA	       0.97	0.943	1	0.970873786
+* Korean Dataset n	XLM_ROBERTA	      0.94	0.989	0.9	0.942
 * Spanish Dataset n     XLM_ROBERTA          0.933	0.917	0.958	0.937
 					
 					
