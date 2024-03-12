@@ -28,6 +28,9 @@ Dataset                  Model Used          Test Accuracy    Test precision   T
 * Japaneese Dataset n	XLM_ROBERTA	       0.97	0.943	1	0.970873786
 * Korean Dataset n	XLM_ROBERTA	      0.94	0.989	0.9	0.942
 * Spanish Dataset n     XLM_ROBERTA          0.933	0.917	0.958	0.937
+* English	Multi-lingual BERT	0.91475	0.945	0.81007	0.87235
+* English	XLM_ROBERTA	0.92721	0.950417	0.8414972	0.892647
+
 					
 					
 PREPROCESSING USING LLAMA2					
@@ -42,3 +45,6 @@ Datasets	        Model Used	Test Accuracy	Test precision	Test Recall	Test F1 sco
 * Japaneese Dataset n	XLM ROBERTA	0.736	0.697986577	0.832	0.759124088
 * Korean Dataset n        XLM ROBERTA	0.968	0.946564885	0.992	0.96875
 * Spanish Dataset n	XLM ROBERTA	0.86	0.819	0.94	0.87
+* English	Multi-lingual BERT	0.900290818	0.89269013	0.8260077	0.858055358
+* English	XLM ROBERTA	0.847956	0.76929	0.824399	0.79589
+
