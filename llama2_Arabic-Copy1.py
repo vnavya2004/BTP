@@ -54,23 +54,39 @@ cd /home/abcd/Navya
 model_name = "meta-llama/Llama-2-7b-hf"
 api_token = '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'
 vocab_size = 50000
-
 tokenizer = AutoTokenizer.from_pretrained(model_name, vocab_size=vocab_size, token=api_token,padding=True)
-
 model = AutoModelForCausalLM.from_pretrained(model_name, vocab_size=vocab_size, token=api_token, ignore_mismatched_sizes=True)
 
 
-# In[7]:
+# In[11]:
 
 
-inputs = tokenizer(df["tweet"].iloc[0], return_tensors="pt")
-outputs = model(**inputs)
+tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+import torch
+import torch.nn as nn
+optimizer = torch.optim.AdamW(model.parameters(), lr=1e-5)
+loss_fn = nn.CrossEntropyLoss()
 
-
-# In[8]:
-
-
-inputs
+# Assuming 'df' is your DataFrame containing tweet text and labels
+for index, row in df.iterrows():
+    # Tokenize input tweet
+    inputs = tokenizer(row["tweet"], return_tensors="pt", truncation=True, padding=True)
+    
+    # Get label
+    label = torch.tensor(row["label"])  # Assuming single label per tweet
+    print(label)
+    # Forward pass
+    outputs = model(**inputs)
+    
+    # Compute loss
+    loss = loss_fn(outputs.logits, label)
+    
+    # Backpropagation
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+    
+    print(f"Iteration {index + 1}: Loss = {loss.item()}")
 
 
 # In[9]:
@@ -85,13 +101,13 @@ outputs.logits.shape
 outputs
 
 
-# In[11]:
+# In[12]:
 
 
 model.config
 
 
-# In[12]:
+# In[13]:
 
 
 tokenizer.add_special_tokens({'pad_token': '[PAD]'})
@@ -155,7 +171,7 @@ dataset_val = TensorDataset(input_ids_val,
                             labels_val)
 
 
-# In[13]:
+# In[14]:
 
 
 # Find the number of samples in X_train and y_train
@@ -174,7 +190,7 @@ print(input_ids_train.shape)
 print(labels_train.shape)
 
 
-# In[14]:
+# In[15]:
 
 
 optimizer = AdamW(model.parameters(), lr=1e-5, eps=1e-8,no_deprecation_warning=True)
@@ -183,7 +199,7 @@ batch_size = 32
 scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=0, num_training_steps=len(dataset_train)*epochs)
 
 
-# In[15]:
+# In[16]:
 
 
 def binary_accuracy(preds, labels):
@@ -207,7 +223,7 @@ def binary_recall(preds, labels):
     return recall_score(labels_flat, preds_flat)
 
 
-# In[23]:
+# In[17]:
 
 
 import os
@@ -229,9 +245,8 @@ print("Device:", device)
 # In[ ]:
 
 
-# Adjust batch sizes
-batch_size = 32
-
+import torch.nn.functional as F
+batch_size=32
 # Calculate total batches
 total_batches_train = len(dataset_train) // batch_size
 total_batches_val = len(dataset_val) // batch_size
@@ -245,18 +260,24 @@ for epoch in range(1, epochs + 1):
     for batch in progress_bar:
         optimizer.zero_grad()
         batch = tuple(b.to(device) for b in batch)
-        
+    
         inputs = {'input_ids': batch[0], 'attention_mask': batch[1]}
         outputs = model(**inputs) 
-        
-        loss = outputs[0].mean()
-        print(loss)
-        loss_train_total += loss.mean().item()
+        logits = outputs.logits
+        targets = batch[2]          
+        targets_expanded = targets.unsqueeze(1).unsqueeze(2).expand(-1,32, 50000)
+        print("Logits shape:", logits.shape)
+        print("Flattened targets shape:", targets_expanded.float().shape)
+        # Calculate binary cross-entropy loss
+        loss = F.binary_cross_entropy_with_logits(logits, targets_expanded.float())
+        loss_train_total += loss.item()
+    
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
         scheduler.step()
-        progress_bar.set_postfix({'training_loss': '{:.3f}'.format(loss.item() / len(batch))})
+        progress_bar.set_postfix({'training_loss': '{:.3f}'.format(loss.item() / len(logits_flat))})
+
 
     loss_train_avg = loss_train_total.item() / total_batches_train
 
@@ -274,29 +295,48 @@ for epoch in range(1, epochs + 1):
         inputs = {'input_ids': batch[0], 'attention_mask': batch[1]}
         with torch.no_grad():
             outputs = model(**inputs)
-        loss = outputs.loss
-        logits = outputs.logits
+        print(ouputs)
+        # Calculate validation loss
+        loss = F.binary_cross_entropy_with_logits(outputs.logits, batch[2].float())  # Assuming batch[2] contains labels
         loss_val_total += loss.item()
-        logits = logits.detach().cpu().numpy()
-        label_ids = inputs['labels'].cpu().numpy()
+        
+        logits = outputs.logits.detach().cpu().numpy()
+        label_ids = batch[2].cpu().numpy()  # Assuming batch[2] contains labels
         predictions.append(logits)
         true_vals.append(label_ids)
 
     loss_val_avg = loss_val_total / total_batches_val
-
     predictions = np.concatenate(predictions, axis=0)
     true_vals = np.concatenate(true_vals, axis=0)
-
     val_accuracy = binary_accuracy(predictions, true_vals)
     val_f1 = binary_f1_score(predictions, true_vals)
     val_precision = binary_precision(predictions, true_vals)
     val_recall = binary_recall(predictions, true_vals)
-
     tqdm.write(f'Validation loss: {loss_val_avg}')
     tqdm.write(f'Accuracy: {val_accuracy}')
     tqdm.write(f'F1 Score: {val_f1}')
     tqdm.write(f'Precision: {val_precision}')
     tqdm.write(f'Recall: {val_recall}')
+
+
+# In[57]:
+
+
+print("Logits shape:", logits.shape)
+print("Targets shape:", targets.shape)
+print("Flattened logits shape:", logits_flat.float().shape)
+
+print("Flattened targets shape:", targets_flat.shape)
+
+print("Flattened targets shape:", target_flat.float().shape)
+targets_expanded = targets.unsqueeze(1).unsqueeze(2).expand(-1,32, 50000)
+print("Flattened targets shape:", targets_expanded.float().shape)
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
