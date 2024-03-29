@@ -48,3 +48,9 @@ Datasets	        Model Used	Test Accuracy	Test precision	Test Recall	Test F1 sco
 * English	Multi-lingual BERT	0.900290818	0.89269013	0.8260077	0.858055358
 * English	XLM ROBERTA	0.847956	0.76929	0.824399	0.79589
 
+MT5 EMBEDDINGS AND DNN					
+Datasets	Model Used	Test Accuracy	Test precision	Test Recall	Test F1 score
+Arabic Dataset	DNN	0.994375	0.993765586	0.995006242	0.994385527
+Bangla Dataset	DNN	0.76076555	0.578764222	0.76076555	0.657400666
+English Dataset	DNN	0.964167013	0.9650003	0.964167013	0.964326068
+Spanish Dataset	DNN	0.953785571	0.953865718	0.953785571	0.953790237
